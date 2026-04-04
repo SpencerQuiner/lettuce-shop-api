@@ -4,7 +4,7 @@ const itemController = require('../controllers/itemController');
 
 /**
  * @swagger
- * /items:
+ * /Items:
  *   get:
  *     summary: Get all items
  *     tags: [Items]
@@ -22,7 +22,7 @@ router.get('/', itemController.getAllItems);
 
 /**
  * @swagger
- * /items/{id}:
+ * /Items/{id}:
  *   get:
  *     summary: Get a single item by ID
  *     tags: [Items]
@@ -46,7 +46,7 @@ router.get('/:id', itemController.getSingleItem);
 
 /**
  * @swagger
- * /items:
+ * /Items:
  *   post:
  *     summary: Create a new item
  *     tags: [Items]
@@ -64,7 +64,7 @@ router.post('/', itemController.createItem);
 
 /**
  * @swagger
- * /items/{id}:
+ * /Items/{id}:
  *   put:
  *     summary: Update an item
  *     tags: [Items]
