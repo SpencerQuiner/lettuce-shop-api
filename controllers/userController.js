@@ -1,5 +1,6 @@
 const User = require('../models/userModel');
 
+//get all users
 const getAllUsers = async (req, res) => {
   try {
     const users = await User.find();
@@ -9,6 +10,7 @@ const getAllUsers = async (req, res) => {
   }
 };
 
+//get single user
 const getSingleUser = async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
@@ -19,8 +21,46 @@ const getSingleUser = async (req, res) => {
   }
 };
 
+//create user- testing before Oauth implementation
+const createUser =async (req, res) => {
+  try {
+    const {username, email } = req.body;
+    if (!username) {
+      return res.status(400).json({message: 'username is required'});
+    }
+
+    const newUser = new User({
+      username,
+      email,
+      displayName: req.body.displayName
+  });
+    const savedUser = await newUser.save();
+
+    res.stauts(201). json(savedUser);
+  } catch (err) {
+    res.status(500).json({message: 'Error creating user', error: err.message});
+  }
+};
+
+//Update user
+const updateUser = async (req, res) => {
+  try {
+    const updatedUser = await User.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true, runValidators: true }
+    );
+    if(!updatedUser) {
+      return res.status(404).json({ message: 'User not found'});
+    }
+    res.status(200).json(updatedUser);
+  } catch (err) {
+    res.status(400).json({ message: 'Error updating user', error: err.message});
+  }
+};
+
+//delete user
 const deleteUser = async(req, res, next) => {
-    //#swagger.tags =['users']
     try {
         const deletedUser = await User.findByIdAndDelete(req.params.id);
 
@@ -36,4 +76,10 @@ const deleteUser = async(req, res, next) => {
     }
 };
 
-module.exports = { getAllUsers, getSingleUser, deleteUser };
+module.exports = { 
+  getAllUsers, 
+  getSingleUser, 
+  createUser,
+  updateUser,
+  deleteUser 
+};

@@ -6,6 +6,7 @@ const mongoose = require('mongoose');
 const swaggerUi = require('swagger-ui-express');
 const swaggerJsDoc = require('swagger-jsdoc');
 const passport = require('passport');
+const schemas = require('./docs/swaggerSchemas');
 
 // Route imports
 const itemRoutes = require('./routes/itemRoutes');
@@ -34,6 +35,9 @@ const swaggerOptions = {
       version: '1.0.0',
       description: 'API docs for Lettuce Shop'
     },
+    components: {
+      schemas: schemas
+    }
   },
   apis: ['./routes/*.js'],
 };

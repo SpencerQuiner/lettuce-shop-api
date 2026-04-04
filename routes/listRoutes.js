@@ -11,6 +11,12 @@ const listController = require('../controllers/listController');
  *     responses:
  *       200:
  *         description: List of all lists
+ *         content:
+ *              application/json:
+ *                  schema:
+ *                      type: array
+ *                      items:
+ *                      $ref: '#/components/schemas/List'
  */
 router.get('/', listController.getAllLists);
 
@@ -29,6 +35,12 @@ router.get('/', listController.getAllLists);
  *     responses:
  *       200:
  *         description: Single list
+ *         content:
+ *              application/json:
+ *                  schema:
+ *                      type: array
+ *                      items:
+ *                      $ref: '#/components/schemas/List'
  *       404:
  *         description: List not found
  */
@@ -49,11 +61,73 @@ router.get('/:id', listController.getSingleList);
  *     responses:
  *       200:
  *         description: List of user's shopping lists
+ *         content:
+ *              application/json:
+ *                  schema:
+ *                      type: array
+ *                      items:
+ *                      $ref: '#/components/schemas/List'
  *       404:
  *         description: User not found
  */
 router.get('/user/:userId', listController.getListsByUser);
 
+/**
+ * @swagger
+ * /Lists:
+ *   post:
+ *     summary: Create a new list
+ *     tags: [Lists]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/List'
+ *     responses:
+ *       201:
+ *         description: List created
+ */
+router.post('/', listController.createList);
+
+/**
+ * @swagger
+ * /Lists/{id}:
+ *   put:
+ *     summary: Update a list
+ *     tags: [Lists]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: List updated
+ *       404:
+ *         description: list not found
+ */
+router.put('/:id', listController.updateList);
+
+/**
+ * @swagger
+ * /Lists/{id}:
+ *   delete:
+ *     summary: Delete a list
+ *     tags: [Lists]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: List deleted successfully
+ *       404:
+ *         description: List not found
+ */ 
 router.delete('/:id', listController.deleteList);
 
 module.exports = router;

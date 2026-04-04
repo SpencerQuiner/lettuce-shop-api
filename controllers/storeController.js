@@ -19,8 +19,47 @@ const getSingleStore = async (req, res) => {
   }
 };
 
+//create store
+const createStore =async (req, res) => {
+  try {
+    const {name, address, category } = req.body;
+    if (!name) {
+      return res.status(400).json({message: 'Store name is required'});
+    }
+
+    const newStore = new Store({
+      name,
+      address,
+      category,
+      notes: req.body.notes
+    });
+    const savedStore = await newStore.save();
+
+    res.stauts(201). json(savedStore);
+  } catch (err) {
+    res.status(500).json({message: 'Error creating store', error: err.message});
+  }
+};
+
+//Update Item
+const updateStore = async (req, res) => {
+  try {
+    const updatedStore = await Store.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true, runValidators: true }
+    );
+    if(!updatedStore) {
+      return res.status(404).json({ message: 'Store not found'});
+    }
+    res.status(200).json(updatedItem);
+  } catch (err) {
+    res.status(400).json({ message: 'Error updating Store', error: err.message});
+  }
+};
+
+//delete store
 const deleteStore = async(req, res, next) => {
-    //#swagger.tags =['stores']
     try {
         const deletedStore = await Store.findByIdAndDelete(req.params.id);
 
@@ -36,4 +75,10 @@ const deleteStore = async(req, res, next) => {
     }
 };
 
-module.exports = { getAllStores, getSingleStore, deleteStore };
+module.exports = { 
+  getAllStores, 
+  getSingleStore, 
+  createStore,
+  updateStore,
+  deleteStore 
+};
