@@ -19,37 +19,50 @@ const getSingleStore = async (req, res) => {
   }
 };
 
-const createNewStore = async (req, res) => {
+// Create store (merged: explicit fields + name validation)
+const createStore = async (req, res) => {
   try {
-    const newStore = new Store({
-      name: req.body.name,
-      address: req.body.address,
-      category: req.body.category,
-      notes: req.body.notes
-    });
-
+    const { name, address, category, notes } = req.body;
+    if (!name) {
+      return res.status(400).json({ message: 'Store name is required' });
+    }
+    const newStore = new Store({ name, address, category, notes });
     const savedStore = await newStore.save();
     res.status(201).json(savedStore);
   } catch (err) {
-    res.status(400).json({ message: "Error creating store", error: err.message });
+    res.status(400).json({ message: 'Error creating store', error: err.message });
   }
 };
 
-const deleteStore = async(req, res, next) => {
-    //#swagger.tags =['stores']
-    try {
-        const deletedStore = await Store.findByIdAndDelete(req.params.id);
-
-        if (!deletedStore) {
-            res.status(404);
-            throw new Error('Store not found' );
-        }
-
-        res.status(200).json({ message: 'Store deleted' });
-    } catch (err) {
-        res.status(500);
-        next(err);
+const updateStore = async (req, res) => {
+  try {
+    const updatedStore = await Store.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true, runValidators: true }
+    );
+    if (!updatedStore) {
+      return res.status(404).json({ message: 'Store not found' });
     }
+    res.status(200).json(updatedStore); // Fixed from updatedItem
+  } catch (err) {
+    res.status(400).json({ message: 'Error updating store', error: err.message });
+  }
 };
 
-module.exports = { getAllStores, getSingleStore, deleteStore, createNewStore };
+const deleteStore = async (req, res, next) => {
+  try {
+    const deletedStore = await Store.findByIdAndDelete(req.params.id);
+    if (!deletedStore) {
+      res.status(404);
+      throw new Error('Store not found');
+    }
+    res.status(200).json({ message: 'Store deleted' });
+  } catch (err) {
+    res.status(500);
+    next(err);
+  }
+};
+
+// Fixed: includes all functions.
+module.exports = { getAllStores, getSingleStore, createStore, updateStore, deleteStore };
